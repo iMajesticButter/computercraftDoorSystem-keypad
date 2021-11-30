@@ -21,23 +21,37 @@ print("initialized")
 
 -- connect to door
 
-while not s_modem.connect(doorAddress, 4) do
-	print("connection timed out, re-trying in 4 seconds")
-	sleep(4)
+local function checkConnection()
+	while not s_modem.connect(doorAddress, 4) do
+		print("connection timed out, re-trying in 4 seconds")
+		sleep(4)
+	end
 end
 
 while true do
 
-	clearScreen()
-	print("Enter Password: ")
-	local input = read("*")
+	checkConnection()
 
-	-- hash the password
-	input = hash.hash(input)
+	parallel.waitForAny(
+		function()
+			clearScreen()
+			print("Enter Password: ")
+			local input = read("*")
 
-	-- send passhash over network
-	s_modem.send(doorAddress, input)
+			-- hash the password
+			input = hash.hash(input)
 
-	sleep(0)
+			-- send passhash over network
+			s_modem.send(doorAddress, input)
+
+			sleep(0)
+		end,
+		function()
+			-- check connection every minute
+			while true do
+				sleep(60)
+				checkConnection()
+			end
+		end)
 
 end
