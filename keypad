@@ -16,6 +16,9 @@ local function clearScreen()
 	term.setCursorPos(1, 1);
 end
 
+clearScreen()
+print("initialized")
+
 -- connect to door
 
 while not s_modem.connect(doorAddress, 4) do
