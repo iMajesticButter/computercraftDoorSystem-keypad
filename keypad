@@ -30,28 +30,17 @@ end
 
 while true do
 
+	clearScreen()
+	print("Enter Password: ")
+	local input = read("*")
+
+	-- hash the password
+	input = hash.hash(input)
+
+	-- send passhash over network
 	checkConnection()
+	s_modem.send(doorAddress, input)
 
-	parallel.waitForAny(
-		function()
-			clearScreen()
-			print("Enter Password: ")
-			local input = read("*")
-
-			-- hash the password
-			input = hash.hash(input)
-
-			-- send passhash over network
-			s_modem.send(doorAddress, input)
-
-			sleep(0)
-		end,
-		function()
-			-- check connection every minute
-			while true do
-				sleep(60)
-				checkConnection()
-			end
-		end)
+	sleep(0)
 
 end
