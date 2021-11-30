@@ -1,0 +1,40 @@
+local ecnet = require("ecnet")
+os.loadAPI("hash")
+
+local modem = peripheral.find("modem")
+local s_modem = ecnet.wrap(modem)
+
+local myAddress = ecnet.address
+
+-- read address file for address
+local addrFile = fs.open("address", "r")
+local doorAddress = addrFile.readLine()
+addrFile.close()
+
+local function clearScreen()
+	term.clear();
+	term.setCursorPos(1, 1);
+end
+
+-- connect to door
+
+while not s_modem.connect(doorAddress, 4) do
+	print("connection timed out, re-trying in 4 seconds")
+	sleep(4)
+end
+
+while true do
+
+	clearScreen()
+	print("Enter Password: ")
+	local input = read("*")
+
+	-- hash the password
+	input = hash.hash(input)
+
+	-- send passhash over network
+	s_modem.send(doorAddress, input)
+
+	sleep(0)
+
+end

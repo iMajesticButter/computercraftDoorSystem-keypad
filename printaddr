@@ -1,0 +1,6 @@
+local ecnet = require("ecnet")
+local modem = peripheral.find("modem")
+s_modem = ecnet.wrap(modem)
+
+address = ecnet.address
+print("Address: " .. address)
